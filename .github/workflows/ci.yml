@@ -33,3 +33,23 @@ jobs:
 
       - name: Build frontend and backend images
         run: docker compose -f docker-compose.yaml build
+
+      - name: Scan frontend image for vulnerabilities
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: docker-frontend-backend-db-frontend:latest
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: os,library
+          severity: CRITICAL,HIGH
+
+      - name: Scan backend image for vulnerabilities
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: docker-frontend-backend-db-backend:latest
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: os,library
+          severity: CRITICAL,HIGH
