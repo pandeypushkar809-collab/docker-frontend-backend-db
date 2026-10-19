@@ -1,16 +1,14 @@
-FROM node:14-alpine
-
+FROM node:22-alpine AS build
 WORKDIR /app
-
-# add '/app/node_modules/.bin' to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
-# install application dependencies
 COPY package*.json ./
-RUN npm install
-# RUN npm install react-scripts -g
-
-# copy app files
+RUN npm ci
 COPY . .
+ENV NODE_OPTIONS=--openssl-legacy-provider
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL=${REACT_APP_API_URL}
+RUN npm run build
 
-EXPOSE 3000
-CMD ["npm", "start"]
+FROM nginx:stable-alpine
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

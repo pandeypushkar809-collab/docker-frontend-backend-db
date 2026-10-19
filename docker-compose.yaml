@@ -1,0 +1,25 @@
+services:
+  mongo:
+    image: mongo:6
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build: ./backend
+    ports:
+      - "3002:3001"
+    depends_on:
+      - mongo
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        REACT_APP_API_URL: "http://localhost:3002/api"
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:
