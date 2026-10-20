@@ -1,0 +1,22 @@
+services:
+  mongo:
+    image: mongo:6
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    image: ghcr.io/pandeypushkar809-collab/todo-backend:52481ad5aa8d8a7d1f40ca38c70c6651c6364671
+    ports:
+      - "3002:3001"
+    depends_on:
+      - mongo
+
+  frontend:
+    image: ghcr.io/pandeypushkar809-collab/todo-frontend:52481ad5aa8d8a7d1f40ca38c70c6651c6364671
+    ports:
+      - "8082:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:

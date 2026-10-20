@@ -1,0 +1,24 @@
+---
+- name: Manage Todo app config on AWS EC2
+  hosts: aws_app
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Create the Todo config folder
+      ansible.builtin.file:
+        path: /opt/todo
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Create the Todo app config
+      ansible.builtin.copy:
+        dest: /opt/todo/app.conf
+        content: |
+          APP_NAME=todo
+          DEPLOYMENT_SOURCE=GHCR
+        owner: root
+        group: root
+        mode: "0644"

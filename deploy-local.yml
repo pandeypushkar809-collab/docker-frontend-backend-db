@@ -1,0 +1,33 @@
+---
+- name: Deploy Todo app locally
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Ensure Todo app is running
+      community.docker.docker_compose_v2:
+        project_src: /home/pushkar_pandey/docker-frontend-backend-db
+        files:
+          - docker-compose.deploy.yaml
+        state: present
+
+    - name: Wait for Todo API to become healthy
+      ansible.builtin.uri:
+        url: http://localhost:3002/api/todos
+        method: GET
+        status_code: 200
+      register: api_check
+      retries: 10
+      delay: 3
+      until: api_check.status == 200
+
+    - name: Check that the Todo website responds
+      ansible.builtin.uri:
+        url: http://localhost:8082/
+        method: GET
+        status_code: 200
+      register: frontend_check
+      retries: 10
+      delay: 3
+      until: frontend_check.status == 200

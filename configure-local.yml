@@ -1,0 +1,20 @@
+---
+- name: Manage a sample app config locally
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Create the Ansible lab folder
+      ansible.builtin.file:
+        path: /home/pushkar_pandey/docker-frontend-backend-db/ansible-lab
+        state: directory
+        mode: "0755"
+
+    - name: Create a sample app config file
+      ansible.builtin.copy:
+        dest: /home/pushkar_pandey/docker-frontend-backend-db/ansible-lab/app.conf
+        content: |
+          APP_NAME=todo
+          DEPLOYMENT_SOURCE=GHCR
+        mode: "0644"
